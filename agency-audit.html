@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agency Audit — Higher Level Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+:root {
+  --taupe: #B29A85;
+  --bg: #F9F8F6;
+  --bg2: #E4E2D2;
+  --bg3: #EFEEE8;
+  --charcoal: #1C1917;
+  --gray: #44403C;
+  --espresso: #171412;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Open Sans',sans-serif;font-size:16px;color:var(--gray);background:var(--bg);min-height:100vh}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* NAV */
+.nav{display:flex;align-items:center;padding:22px 48px;border-bottom:1px solid var(--bg2);background:var(--bg);flex-shrink:0}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-text{font-family:'Libre Baskerville',serif;font-size:19px;color:var(--charcoal);letter-spacing:-0.2px}
+.logo-text span{color:var(--gray);font-weight:400}
+
+/* HERO */
+.hero-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;text-align:center;max-width:720px;margin:0 auto;width:100%}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--taupe);margin-bottom:20px}
+.hero-inner h1{font-family:'Libre Baskerville',serif;font-size:54px;line-height:1.1;color:var(--charcoal);margin-bottom:24px}
+.hero-inner h1 em{font-style:italic;color:var(--taupe)}
+.hero-inner p{font-size:17px;line-height:1.7;color:var(--gray);max-width:520px;margin:0 auto 36px}
+.pillars-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:44px}
+.chip{background:var(--bg2);color:var(--charcoal);font-size:12px;font-weight:500;padding:6px 14px;border-radius:100px}
+
+/* BUTTONS */
+.btn{font-family:'Open Sans',sans-serif;font-size:16px;font-weight:500;padding:15px 36px;border:none;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:all .15s;text-decoration:none}
+.btn-dark{background:var(--espresso);color:var(--bg)}
+.btn-dark:hover{background:var(--charcoal);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--charcoal);border:1.5px solid var(--bg2)}
+.btn-outline:hover{border-color:var(--taupe)}
+.btn-taupe{background:var(--taupe);color:#fff;font-weight:600;padding:17px 44px}
+.btn-taupe:hover{background:#9d8773;transform:translateY(-2px)}
+
+/* PROGRESS */
+.prog-wrap{padding:28px 48px 0;flex-shrink:0}
+.prog-top{display:flex;justify-content:space-between;margin-bottom:10px}
+.prog-label{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--taupe)}
+.prog-step{font-size:12px;color:var(--gray)}
+.prog-track{height:3px;background:var(--bg2);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--taupe);border-radius:2px;transition:width .5s ease}
+
+/* PILLAR SCREEN */
+.pillar-inner{flex:1;max-width:760px;margin:0 auto;width:100%;padding:48px 24px 80px}
+.pillar-num{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--taupe);margin-bottom:8px}
+.pillar-ttl{font-family:'Libre Baskerville',serif;font-size:38px;color:var(--charcoal);line-height:1.2;margin-bottom:44px}
+
+/* QUESTIONS */
+.qblock{margin-bottom:36px;padding-bottom:36px;border-bottom:1px solid var(--bg2)}
+.qblock:last-of-type{border-bottom:none}
+.qtxt{font-family:'Libre Baskerville',serif;font-size:17px;color:var(--charcoal);margin-bottom:18px;line-height:1.5}
+.multi-hint{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--taupe);margin-bottom:14px;margin-top:-10px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:center;gap:13px;padding:13px 16px;background:var(--bg3);border:1.5px solid transparent;border-radius:6px;cursor:pointer;transition:all .13s;user-select:none}
+.opt:hover{border-color:var(--taupe);background:var(--bg2)}
+.opt.sel{border-color:var(--taupe);background:var(--bg2)}
+.opt.sel .marker{background:var(--taupe);border-color:var(--taupe)}
+.opt.sel .marker::after{opacity:1}
+.marker{width:20px;height:20px;border-radius:50%;border:2px solid var(--bg2);background:var(--bg);flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;transition:all .13s}
+.marker.chk{border-radius:4px}
+.marker::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%;opacity:0;transition:opacity .13s}
+.marker.chk::after{width:5px;height:9px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px);background:transparent;border-radius:0}
+.opt-lbl{font-size:15px;color:var(--charcoal);line-height:1.4}
+
+/* NAV BUTTONS */
+.nav-btns{display:flex;justify-content:space-between;align-items:center;margin-top:44px;padding-top:28px;border-top:1px solid var(--bg2)}
+
+/* EMAIL GATE */
+.gate-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;text-align:center;max-width:520px;margin:0 auto;width:100%}
+.gate-icon{width:60px;height:60px;background:var(--bg2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 28px}
+.gate-inner h2{font-family:'Libre Baskerville',serif;font-size:38px;color:var(--charcoal);margin-bottom:14px}
+.gate-inner p{font-size:16px;line-height:1.7;margin-bottom:36px}
+.fg{width:100%;margin-bottom:14px;text-align:left}
+.fg label{display:block;font-size:12px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--charcoal);margin-bottom:7px}
+.fg input{width:100%;padding:13px 15px;border:1.5px solid var(--bg2);border-radius:4px;font-family:'Open Sans',sans-serif;font-size:16px;color:var(--charcoal);background:var(--bg);outline:none;transition:border-color .2s}
+.fg input:focus{border-color:var(--taupe)}
+.ferr{color:#c0392b;font-size:13px;margin-top:6px;display:none}
+.privacy{font-size:12px;color:var(--gray);margin-top:14px;opacity:.65}
+
+/* RESULTS NAV */
+.res-nav{display:flex;align-items:center;justify-content:space-between;padding:22px 48px;border-bottom:1px solid var(--bg2);background:var(--bg);flex-shrink:0}
+
+/* RESULTS BODY */
+.res-body{max-width:880px;margin:0 auto;width:100%;padding:60px 24px 96px}
+.res-hdr{text-align:center;margin-bottom:56px}
+.res-hdr .eyebrow{margin-bottom:10px}
+.res-hdr h2{font-family:'Libre Baskerville',serif;font-size:44px;color:var(--charcoal);line-height:1.2}
+
+/* OVERALL CARD */
+.overall-card{background:var(--espresso);border-radius:12px;padding:52px 36px;text-align:center;margin-bottom:44px}
+.oc-label{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--taupe);margin-bottom:14px}
+.oc-score{font-family:'Libre Baskerville',serif;font-size:88px;font-weight:700;color:#fff;line-height:1}
+.oc-denom{font-size:30px;color:rgba(255,255,255,.45)}
+.oc-verdict{font-family:'Libre Baskerville',serif;font-size:26px;color:var(--taupe);margin-top:14px;margin-bottom:8px}
+.oc-desc{font-size:15px;color:rgba(255,255,255,.65);max-width:460px;margin:0 auto;line-height:1.65}
+
+/* PILLAR CARDS */
+.sec-ttl{font-family:'Libre Baskerville',serif;font-size:30px;color:var(--charcoal);margin-bottom:28px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:56px}
+.pc{background:var(--bg3);border-radius:8px;padding:26px 22px;position:relative;overflow:hidden}
+.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--taupe)}
+.pc.crit::before{background:#c0392b}
+.pc.below::before{background:#e67e22}
+.pc.avg::before{background:#d4ac0d}
+.pc.strong::before{background:#27ae60}
+.pc-name{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);margin-bottom:14px}
+.pc-score{display:flex;align-items:baseline;gap:3px;margin-bottom:10px}
+.pc-num{font-family:'Libre Baskerville',serif;font-size:44px;font-weight:700;color:var(--charcoal);line-height:1}
+.pc-den{font-size:18px;color:var(--gray)}
+.badge{font-size:12px;font-weight:600;padding:3px 11px;border-radius:100px;display:inline-block;margin-bottom:14px}
+.b-crit{background:#fde8e8;color:#c0392b}
+.b-below{background:#fef3e2;color:#c47000}
+.b-avg{background:#fef9e7;color:#b7950b}
+.b-strong{background:#eafaf1;color:#1e8449}
+.b-elite{background:#f5f0eb;color:var(--taupe)}
+.pbar{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:3px;background:var(--taupe);transition:width 1s ease .3s}
+.pc.crit .pbar-fill{background:#c0392b}
+.pc.below .pbar-fill{background:#e67e22}
+.pc.avg .pbar-fill{background:#d4ac0d}
+.pc.strong .pbar-fill{background:#27ae60}
+
+/* RECOMMENDATIONS */
+.rec-card{background:var(--bg3);border-radius:8px;padding:26px 26px 26px 22px;margin-bottom:14px;border-left:4px solid var(--taupe)}
+.rec-card.pri{border-left-color:#c0392b}
+.rec-tag{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--taupe);margin-bottom:7px}
+.rec-tag.pri{color:#c0392b}
+.rec-ttl{font-family:'Libre Baskerville',serif;font-size:19px;color:var(--charcoal);margin-bottom:9px}
+.rec-body{font-size:14px;line-height:1.7;color:var(--gray)}
+
+/* CTA BLOCK */
+.cta-block{background:var(--espresso);border-radius:12px;padding:56px 36px;text-align:center}
+.cta-block h3{font-family:'Libre Baskerville',serif;font-size:36px;color:#fff;margin-bottom:14px;line-height:1.2}
+.cta-block p{font-size:16px;color:rgba(255,255,255,.65);max-width:460px;margin:0 auto 36px;line-height:1.7}
+
+/* LOADING */
+.loading{display:none;position:fixed;inset:0;background:rgba(249,248,246,.92);z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.loading.on{display:flex}
+.spinner{width:38px;height:38px;border:3px solid var(--bg2);border-top-color:var(--taupe);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{font-family:'Libre Baskerville',serif;font-size:17px;color:var(--charcoal)}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .nav,.res-nav{padding:18px 20px}
+  .prog-wrap{padding:20px 20px 0}
+  .hero-inner h1{font-size:34px}
+  .pillar-ttl{font-size:26px}
+  .pillar-inner{padding:36px 20px 64px}
+  .res-hdr h2{font-size:28px}
+  .oc-score{font-size:68px}
+  .oc-verdict{font-size:20px}
+  .cta-block h3{font-size:26px}
+  .cta-block{padding:36px 20px}
+  .nav-btns{flex-direction:column-reverse;gap:10px}
+  .nav-btns .btn{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<div class="loading" id="loader">
+  <div class="spinner"></div>
+  <p>Calculating your results…</p>
+</div>
+
+<!-- SCREEN 1: HERO -->
+<div class="screen active" id="s-hero">
+  <nav class="nav"><div class="logo">
+    <svg width="42" height="27" viewBox="0 0 42 27" fill="none"><polygon points="0,13.5 17,0 17,27" fill="#B29A85"/><polygon points="21,13.5 35,4 35,23" fill="#B29A85" opacity=".65"/></svg>
+    <span class="logo-text"><strong>Higher</strong><span>Level</span><strong>Agency</strong></span>
+  </div></nav>
+  <div class="hero-inner">
+    <div class="eyebrow">Free Agency Audit</div>
+    <h1>Find out where your agency is <em>leaving money on the table</em></h1>
+    <p>Answer 25 questions across 5 critical pillars and get a personalized scorecard with actionable recommendations — in under 5 minutes.</p>
+    <div class="pillars-row">
+      <span class="chip">Offer Creation</span>
+      <span class="chip">Lead Generation</span>
+      <span class="chip">Closing</span>
+      <span class="chip">Sales Process</span>
+      <span class="chip">Productizing Backend</span>
+    </div>
+    <button class="btn btn-dark" onclick="startAudit()">Start Your Audit <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+  </div>
+</div>
+
+<!-- SCREEN 2: PILLARS -->
+<div class="screen" id="s-pillar">
+  <nav class="nav"><div class="logo">
+    <svg width="42" height="27" viewBox="0 0 42 27" fill="none"><polygon points="0,13.5 17,0 17,27" fill="#B29A85"/><polygon points="21,13.5 35,4 35,23" fill="#B29A85" opacity=".65"/></svg>
+    <span class="logo-text"><strong>Higher</strong><span>Level</span><strong>Agency</strong></span>
+  </div></nav>
+  <div class="prog-wrap">
+    <div class="prog-top"><span class="prog-label" id="progLabel">Pillar 1 of 5</span><span class="prog-step" id="progStep">Offer Creation</span></div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:20%"></div></div>
+  </div>
+  <div class="pillar-inner">
+    <div class="pillar-num" id="pNum">Pillar 01</div>
+    <div class="pillar-ttl" id="pTtl">Offer Creation</div>
+    <div id="qContainer"></div>
+    <div class="nav-btns">
+      <button class="btn btn-outline" id="backBtn" onclick="goBack()">← Back</button>
+      <button class="btn btn-dark" id="nextBtn" onclick="goNext()">Continue <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: EMAIL GATE -->
+<div class="screen" id="s-email">
+  <nav class="nav"><div class="logo">
+    <svg width="42" height="27" viewBox="0 0 42 27" fill="none"><polygon points="0,13.5 17,0 17,27" fill="#B29A85"/><polygon points="21,13.5 35,4 35,23" fill="#B29A85" opacity=".65"/></svg>
+    <span class="logo-text"><strong>Higher</strong><span>Level</span><strong>Agency</strong></span>
+  </div></nav>
+  <div class="gate-inner">
+    <div class="gate-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B29A85" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+    <h2>Your audit is complete.</h2>
+    <p>Enter your details below to receive your personalized scorecard and recommendations instantly.</p>
+    <div class="fg"><label>Full Name</label><input type="text" id="iName" placeholder="Your name"></div>
+    <div class="fg"><label>Email Address</label><input type="email" id="iEmail" placeholder="your@email.com"><div class="ferr" id="emailErr">Please enter a valid email address.</div></div>
+    <button class="btn btn-dark" style="width:100%;justify-content:center" id="submitBtn" onclick="submitResults()">See My Results <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+    <p class="privacy">Your information is secure and will never be shared.</p>
+  </div>
+</div>
+
+<!-- SCREEN 4: RESULTS -->
+<div class="screen" id="s-results">
+  <nav class="res-nav">
+    <div class="logo">
+      <svg width="42" height="27" viewBox="0 0 42 27" fill="none"><polygon points="0,13.5 17,0 17,27" fill="#B29A85"/><polygon points="21,13.5 35,4 35,23" fill="#B29A85" opacity=".65"/></svg>
+      <span class="logo-text"><strong>Higher</strong><span>Level</span><strong>Agency</strong></span>
+    </div>
+    <a href="https://bit.ly/HLA-Consultation" target="_blank" class="btn btn-dark" style="padding:11px 22px;font-size:14px">Book a Call</a>
+  </nav>
+  <div class="res-body">
+    <div class="res-hdr">
+      <div class="eyebrow">Your Agency Audit Results</div>
+      <h2 id="resGreeting">Here's how your agency stacks up</h2>
+    </div>
+    <div class="overall-card">
+      <div class="oc-label">Overall Agency Score</div>
+      <div class="oc-score" id="ocScore">0<span class="oc-denom">/5</span></div>
+      <div class="oc-verdict" id="ocVerdict">—</div>
+      <div class="oc-desc" id="ocDesc">—</div>
+    </div>
+    <div class="sec-ttl">Pillar Breakdown</div>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="sec-ttl">Your Action Plan</div>
+    <div id="recsContainer"></div>
+    <div class="cta-block">
+      <h3 id="ctaH">Ready to scale your agency?</h3>
+      <p id="ctaP">Book a free strategy call with Higher Level Agency and let's build a clear roadmap to take your agency to the next level.</p>
+      <a href="https://bit.ly/HLA-Consultation" target="_blank" class="btn btn-taupe">Book Your Free Strategy Call <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── EMAILJS CONFIG ────────────────────────────────────────────
+// Replace these 4 values after setting up EmailJS (instructions below)
+const EJS_KEY      = 'YOUR_PUBLIC_KEY';
+const EJS_SERVICE  = 'YOUR_SERVICE_ID';
+const EJS_TEMPLATE = 'YOUR_TEMPLATE_ID';
+const OWNER_EMAIL  = 'YOUR_EMAIL@example.com';
+// ─────────────────────────────────────────────────────────────
+
+const PILLARS = [
+  {
+    id:'offer', title:'Offer Creation', num:'Pillar 01',
+    questions:[
+      { id:'q1', text:'What kind of deal structure do you have?', type:'radio', opts:[
+        {l:'Commission based',s:.25},{l:'Retainer',s:.5},{l:'Retainer + commission',s:1}]},
+      { id:'q2', text:'Do you have guarantees on your offer?', type:'radio', opts:[
+        {l:'Yes',s:1},{l:'No',s:0}]},
+      { id:'q3', text:'How are you better than your competitors?', type:'checkbox', opts:[
+        {l:'Better pricing',s:.25},{l:'More experience',s:.25},{l:'Faster results',s:.25},{l:'Better quality',s:.25}]},
+      { id:'q4', text:'How many case studies do you have?', type:'radio', opts:[
+        {l:'0–5',s:.25},{l:'5–10',s:.5},{l:'10–20',s:.75},{l:'Over 20',s:1}]},
+      { id:'q5', text:'Are you a specialist?', type:'radio', opts:[
+        {l:'I specialize in a very niche service and industry',s:1},
+        {l:'I specialize in a very niche service',s:.75},
+        {l:'I specialize in a very niche industry',s:.75},
+        {l:'I offer a broad offer / full service',s:.25}]}
+    ]
+  },
+  {
+    id:'leadgen', title:'Lead Generation', num:'Pillar 02',
+    questions:[
+      { id:'q1', text:'How many sales channels are you covering?', type:'radio', opts:[
+        {l:'0',s:0},{l:'1',s:.33},{l:'2',s:.67},{l:'3 or more',s:1}]},
+      { id:'q2', text:'How many calls are you booking per week?', type:'radio', opts:[
+        {l:'0',s:0},{l:'1–5',s:.33},{l:'5–10',s:.67},{l:'10–20',s:1}]},
+      { id:'q3', text:'How much time are you spending on lead gen per day?', type:'radio', opts:[
+        {l:'0',s:0},{l:'1 hour or less',s:.33},{l:'1–3 hours',s:.67},{l:'Over 3 hours',s:1}]},
+      { id:'q4', text:'What kind of lead gen do you do?', type:'checkbox', opts:[
+        {l:'Cold calling',s:.2},{l:'LinkedIn outreach',s:.2},{l:'Cold email',s:.2},{l:'Content',s:.2},{l:'Paid ads',s:.2}]},
+      { id:'q5', text:'Is your lead gen manual or automated?', type:'radio', opts:[
+        {l:'Manual',s:.5},{l:'Automated',s:1},{l:"I don't do lead gen",s:0}]}
+    ]
+  },
+  {
+    id:'closing', title:'Closing', num:'Pillar 03',
+    questions:[
+      { id:'q1', text:'What is your talking-to-listening ratio in sales calls?', type:'radio', opts:[
+        {l:'10–30% listening, 70–90% talking',s:.33},
+        {l:'40–60% listening, 40–60% talking',s:.67},
+        {l:'70–90% listening, 10–30% talking',s:1}]},
+      { id:'q2', text:'How much time do you spend talking about the features?', type:'radio', opts:[
+        {l:'5–25%',s:1},{l:'25–50%',s:.75},{l:'50–70%',s:.5},{l:'70–95%',s:.25}]},
+      { id:'q3', text:'Do you use a particular strategy or rely on experience?', type:'radio', opts:[
+        {l:'I use a specific strategy that covers every phase of the sales call',s:1},
+        {l:'I go with the flow based on what the client needs',s:.5},
+        {l:'I do a free consultation and go through general information',s:.33},
+        {l:'I follow general sales tips throughout the call',s:.5}]},
+      { id:'q4', text:'How long have you been doing sales?', type:'radio', opts:[
+        {l:'Just started / want to start',s:.25},{l:'1–5 years of experience',s:.5},
+        {l:'5–10 years of experience',s:.75},{l:'Over 10 years of experience',s:1}]},
+      { id:'q5', text:'What is your close rate?', type:'radio', opts:[
+        {l:'0–10%',s:.2},{l:'10–30%',s:.4},{l:'30–50%',s:.6},{l:'50–70%',s:.8},{l:'70–100%',s:1}]}
+    ]
+  },
+  {
+    id:'sales', title:'Sales Process', num:'Pillar 04',
+    questions:[
+      { id:'q1', text:'What CRM do you use?', type:'radio', opts:[
+        {l:'GHL (GoHighLevel)',s:1},{l:'HubSpot',s:1},{l:'Salesforce',s:1},
+        {l:'Klaviyo',s:.75},{l:'Other',s:.75},{l:"I don't use a CRM",s:0}]},
+      { id:'q2', text:'Who does your lead gen?', type:'radio', opts:[
+        {l:'I do it myself',s:.5},{l:'I have someone / a team',s:1},
+        {l:"It's automated",s:1},{l:'Still working on it',s:.25}]},
+      { id:'q3', text:'Do you have closers?', type:'radio', opts:[
+        {l:'I have full-time closers',s:1},{l:'I have 1099 closers',s:.75},{l:'I handle closing myself',s:.5}]},
+      { id:'q4', text:'How much of your sales process is automated?', type:'radio', opts:[
+        {l:'No automation yet',s:.25},{l:'Basic automation',s:.5},
+        {l:'Good automation — still a lot of manual work',s:.75},
+        {l:'Advanced — most of our work is automated',s:1}]},
+      { id:'q5', text:'Do you have a referral system set up?', type:'radio', opts:[
+        {l:'I sometimes get referrals from friends and family',s:.25},
+        {l:'I get referrals from people I worked with',s:.5},
+        {l:"I don't get any referrals",s:0},
+        {l:'I have a commission-based referral system',s:1}]}
+    ]
+  },
+  {
+    id:'backend', title:'Productizing Backend', num:'Pillar 05',
+    questions:[
+      { id:'q1', text:'Are you only managing the agency or are you involved in operations?', type:'radio', opts:[
+        {l:"I'm only managing — all operations are taken care of",s:1},
+        {l:'I manage and handle a small part of the operations',s:.75},
+        {l:"I'm very involved in the operations",s:.5},
+        {l:"I'm the only one handling the operations",s:.25}]},
+      { id:'q2', text:'How automated is your fulfilment process?', type:'checkbox', opts:[
+        {l:"I don't have automations yet",s:0},
+        {l:'I have basic tools for automation',s:.33},
+        {l:'I have advanced and specific automation tools for my business',s:.67},
+        {l:'I use complex AI / AI agents to run my operations',s:1}]},
+      { id:'q3', text:'Do you do customized projects for each client?', type:'radio', opts:[
+        {l:"It's a different project depending on the client",s:.25},
+        {l:'It varies but there are fixed basics',s:.5},
+        {l:"It's mostly the same but varies a little",s:.75},
+        {l:"It's completely fixed — we don't customize",s:1}]},
+      { id:'q4', text:'Do you have clear internal SOPs?', type:'radio', opts:[
+        {l:'My team can handle everything easily — everything is explained to the T',s:1},
+        {l:"I give my team the map and they're free to adapt",s:.75},
+        {l:"I gave my team the basics but they do what they see fit",s:.5},
+        {l:'I give my team absolute freedom based on their experience',s:.25}]},
+      { id:'q5', text:'Is everything documented?', type:'radio', opts:[
+        {l:'Everything is recorded and documented',s:1},
+        {l:'We document the most important things and stay aligned with the vision',s:.75},
+        {l:"We note things when they're relevant or when we have to",s:.5},
+        {l:"We don't record or document anything",s:.25}]}
+    ]
+  }
+];
+
+const RECS = {
+  offer:{
+    crit:{t:'Rebuild Your Offer from the Ground Up',b:"Your offer lacks the structure and differentiation needed to compete. Start with a retainer + commission deal structure, add a strong guarantee, and collect at least 5–10 case studies. Most importantly — niche down. A specialized agency with a focused offer will always outperform a generalist. Your offer is your first impression; right now, it's costing you deals before the conversation even starts."},
+    low:{t:'Sharpen Your Offer\'s Competitive Edge',b:"You have the basics but your offer doesn't stand out in a crowded market. Add a risk-reversal guarantee, build out your case study library, and identify one specific niche to dominate. Clients pay premium prices for specialists, not generalists."},
+    mid:{t:'Optimize Your Offer for Premium Positioning',b:"Your offer is working but it's not maximizing your value. Consider moving to a retainer + performance structure, and document your differentiation clearly. Every case study and guarantee you add builds the trust that closes deals faster."},
+    high:{t:'Fine-Tune Your Offer to Reach Elite Level',b:"Your offer is strong. Focus on collecting more case studies and refining how you communicate your specialization. Even small improvements in positioning can justify higher rates and attract better clients."}
+  },
+  leadgen:{
+    crit:{t:'Build a Lead Generation Engine Immediately',b:"Your pipeline is running dry. Without consistent lead flow, everything else in your agency doesn't matter. Start with 1–2 outreach channels (cold email + LinkedIn is the most accessible starting point), commit 2–3 hours daily, and work toward automating as you scale. You need a predictable system, not hope."},
+    low:{t:'Systematize and Scale Your Lead Gen',b:"You're generating some leads but not enough to be predictable. Expand to at least 2–3 active channels, increase your daily time investment, and start introducing automation to your outreach. Consistency is the key — sporadic lead gen produces sporadic revenue."},
+    mid:{t:'Scale Your Lead Gen with Automation',b:"You have a working lead gen system, but manual processes are limiting how far you can scale. Invest in automating your outreach sequences and expand your channel mix. More channels = more predictability."},
+    high:{t:'Optimize Lead Gen for Quality Over Quantity',b:"Your lead gen is working well. The next level is improving lead quality and reducing time investment through better automation and targeting. Focus on the channels with the highest close rate and double down."}
+  },
+  closing:{
+    crit:{t:'Invest in a Structured Closing Framework',b:"Your close rate and approach need significant work. Winging it on sales calls is costing you clients. Implement a specific sales framework, practice listening more than talking, and focus on outcomes — not features. Every call without a framework is a missed deal."},
+    low:{t:'Develop a Repeatable Sales Call Structure',b:"You have some sales experience but lack the structure to close consistently. Adopt a specific sales methodology, track your close rate, and record your calls to identify where deals fall apart. Moving from 10–30% to 40%+ is entirely achievable with the right system."},
+    mid:{t:'Sharpen Your Process for Higher Close Rates',b:"You're closing deals but there's room to improve. Focus on mastering discovery — the better you understand the client's pain, the easier the close. Spend less time on features and more on outcomes and ROI."},
+    high:{t:'Refine Your Closing Techniques',b:"You're closing at a strong rate. The improvement here is in the details — handling objections more precisely, shortening your sales cycle, and scripting your most successful call patterns so they can be replicated by a team."}
+  },
+  sales:{
+    crit:{t:'Build the Infrastructure for a Real Sales Operation',b:"You're missing the core systems that turn an agency into a scalable business. Implement a CRM immediately (GHL is built for agencies), set up basic automation for follow-ups, and create a plan to get lead gen off your plate. You cannot grow if you're doing everything manually and alone."},
+    low:{t:'Systematize Your Sales Operations',b:"You have some systems but significant manual work is holding you back. Prioritize CRM implementation, basic automation for your pipeline, and a referral system. Every hour spent on admin is an hour not spent closing deals or serving clients."},
+    mid:{t:'Automate and Delegate Your Sales Process',b:"Your sales process works but it's not scalable yet. Focus on removing yourself from the lead gen process by hiring or automating, set up a formal referral program, and push your automation to the next level."},
+    high:{t:'Optimize Your Sales Infrastructure for Scale',b:"Your sales process is solid. The next step is advanced automation, hiring specialized closers if you haven't, and building a referral system that consistently generates warm inbound leads."}
+  },
+  backend:{
+    crit:{t:'Get Out of Operations — Build Systems That Scale',b:"If you're handling operations yourself, your agency's growth ceiling is your personal bandwidth. Document every process, hire or outsource fulfilment, and start with basic automation tools. An agency where the owner is the bottleneck cannot scale. This is urgent."},
+    low:{t:'Productize Your Delivery and Document Everything',b:"You're too involved in the weeds. Create clear SOPs for every repeatable task, document your processes, and standardize your service delivery. Moving from custom projects to a productized service model will cut your delivery time in half."},
+    mid:{t:'Standardize and Automate Your Backend',b:"You have some systems but your fulfilment isn't fully productized yet. Focus on creating a standardized service delivery playbook, implementing advanced automation tools specific to your service, and ensuring your team can execute without you."},
+    high:{t:'Optimize Your Backend for Maximum Efficiency',b:"Your backend is running well. The next level is introducing AI-powered automation tools, tightening your documentation so onboarding new team members is seamless, and ensuring your delivery system can handle 2–3x your current client load."}
+  }
+};
+
+let answers = {}, cur = 0;
+
+function startAudit(){ show('s-pillar'); cur=0; renderPillar(0); }
+
+function renderPillar(i){
+  const p = PILLARS[i];
+  document.getElementById('pNum').textContent = p.num;
+  document.getElementById('pTtl').textContent = p.title;
+  document.getElementById('progLabel').textContent = `Pillar ${i+1} of 5`;
+  document.getElementById('progStep').textContent = p.title;
+  document.getElementById('progFill').style.width = `${((i+1)/5)*100}%`;
+  document.getElementById('backBtn').style.visibility = i===0?'hidden':'visible';
+  const nb = document.getElementById('nextBtn');
+  nb.innerHTML = i===4
+    ? 'Get My Results <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>'
+    : 'Continue <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+
+  if(!answers[i]) answers[i]={};
+  const c = document.getElementById('qContainer');
+  c.innerHTML = '';
+
+  p.questions.forEach((q,qi)=>{
+    const blk = document.createElement('div');
+    blk.className='qblock';
+    blk.dataset.qid = q.id;
+
+    const qt = document.createElement('div');
+    qt.className='qtxt';
+    qt.textContent=`${qi+1}. ${q.text}`;
+    blk.appendChild(qt);
+
+    if(q.type==='checkbox'){
+      const h=document.createElement('div');
+      h.className='multi-hint';
+      h.textContent='Select all that apply';
+      blk.appendChild(h);
+    }
+
+    const ol=document.createElement('div');
+    ol.className='opts';
+
+    q.opts.forEach((opt,oi)=>{
+      const item=document.createElement('div');
+      item.className='opt';
+
+      const mk=document.createElement('div');
+      mk.className='marker'+(q.type==='checkbox'?' chk':'');
+
+      const lb=document.createElement('span');
+      lb.className='opt-lbl';
+      lb.textContent=opt.l;
+
+      item.appendChild(mk);
+      item.appendChild(lb);
+
+      // restore
+      const ans=answers[i][q.id];
+      if(ans){
+        if(q.type==='radio'&&ans.oi===oi) item.classList.add('sel');
+        if(q.type==='checkbox'&&ans.sel&&ans.sel.includes(oi)) item.classList.add('sel');
+      }
+
+      item.addEventListener('click',()=>pick(item,q,oi,i));
+      ol.appendChild(item);
+    });
+
+    blk.appendChild(ol);
+    c.appendChild(blk);
+  });
+}
+
+function pick(item,q,oi,pi){
+  if(q.type==='radio'){
+    document.querySelectorAll(`#qContainer .opt`).forEach(el=>{
+      if(el.closest('.qblock').dataset.qid===q.id) el.classList.remove('sel');
+    });
+    item.classList.add('sel');
+    answers[pi][q.id]={s:q.opts[oi].s, oi};
+  } else {
+    if(!answers[pi][q.id]) answers[pi][q.id]={sel:[],s:0};
+    const arr=answers[pi][q.id].sel;
+    const idx=arr.indexOf(oi);
+    if(idx>-1){arr.splice(idx,1);item.classList.remove('sel');}
+    else{arr.push(oi);item.classList.add('sel');}
+    answers[pi][q.id].s=Math.min(arr.reduce((a,k)=>a+q.opts[k].s,0),1);
+  }
+}
+
+function goNext(){
+  const p=PILLARS[cur];
+  for(const q of p.questions){
+    const a=answers[cur][q.id];
+    if(!a||(q.type==='checkbox'&&a.sel.length===0)){
+      highlightMissing(q.id); return;
+    }
+  }
+  if(cur<4){cur++;renderPillar(cur);scrollTo(0,0);}
+  else{show('s-email');scrollTo(0,0);}
+}
+
+function highlightMissing(qid){
+  const blk=document.querySelector(`#qContainer .qblock[data-qid="${qid}"]`);
+  if(!blk)return;
+  blk.style.outline='2px solid #c0392b';
+  blk.style.borderRadius='6px';
+  blk.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>{blk.style.outline='';},2000);
+}
+
+function goBack(){
+  if(cur>0){cur--;renderPillar(cur);scrollTo(0,0);}
+  else{show('s-hero');}
+}
+
+// ── SCORING ──────────────────────────────────────────────────
+function calcScores(){
+  const ps={};
+  PILLARS.forEach((p,pi)=>{
+    let t=0;
+    p.questions.forEach(q=>{const a=answers[pi][q.id];if(a)t+=a.s;});
+    ps[p.id]=Math.round(t*10)/10;
+  });
+  const overall=Math.round((Object.values(ps).reduce((a,b)=>a+b,0)/5)*10)/10;
+  return{ps,overall};
+}
+
+function status(s){
+  if(s<1.5)return{lbl:'Critical',cls:'crit',bcls:'b-crit'};
+  if(s<2.5)return{lbl:'Below Average',cls:'below',bcls:'b-below'};
+  if(s<3.5)return{lbl:'Average',cls:'avg',bcls:'b-avg'};
+  if(s<4.5)return{lbl:'Strong',cls:'strong',bcls:'b-strong'};
+  return{lbl:'Elite',cls:'elite',bcls:'b-elite'};
+}
+
+function verdict(s){
+  if(s<1.5)return{v:'Agency in Crisis',d:"Your agency has serious structural gaps across multiple areas. The good news — identifying these now means you can fix them before they cost you more clients and revenue."};
+  if(s<2.5)return{v:'Below Average Agency',d:"You have some foundations in place, but critical gaps are limiting your growth. Focused improvements in your weakest pillars will have an immediate impact on revenue."};
+  if(s<3.5)return{v:'Average Agency',d:"You're running a functional agency, but you're leaving significant revenue on the table. Strategic improvements in key areas will separate you from the competition."};
+  if(s<4.5)return{v:'Growing Agency',d:"Your agency has strong foundations and you're executing well. Fine-tuning the remaining gaps is the difference between a good agency and a great one."};
+  return{v:'Higher Level Agency',d:"You're operating at an elite level across nearly all pillars. You're in the top tier of agency operators — the focus now is optimization and scale."};
+}
+
+function getRec(id,s){
+  const r=RECS[id];
+  if(s<1.5)return r.crit;
+  if(s<2.5)return r.low;
+  if(s<3.5)return r.mid;
+  return r.high;
+}
+
+// ── RESULTS DISPLAY ──────────────────────────────────────────
+function showResults(name){
+  const{ps,overall}=calcScores();
+  const v=verdict(overall);
+  const first=name.trim().split(' ')[0];
+
+  document.getElementById('resGreeting').textContent=`Here's how ${first}'s agency stacks up`;
+  document.getElementById('ocScore').innerHTML=`${overall}<span class="oc-denom">/5</span>`;
+  document.getElementById('ocVerdict').textContent=v.v;
+  document.getElementById('ocDesc').textContent=v.d;
+
+  if(overall<2.5){
+    document.getElementById('ctaH').textContent="You're leaving serious money on the table.";
+    document.getElementById('ctaP').textContent="Don't let these gaps cost you another client. Book a free strategy call and let's build a clear roadmap to fix the critical areas — fast.";
+  } else if(overall<3.5){
+    document.getElementById('ctaH').textContent="You're close — let's close the gap.";
+    document.getElementById('ctaP').textContent="You have the foundations. Book a free strategy call and let's identify the specific changes that will have the biggest impact on your growth.";
+  }
+
+  // Pillar cards
+  const grid=document.getElementById('pgrid');
+  grid.innerHTML='';
+  PILLARS.forEach(p=>{
+    const s=ps[p.id],st=status(s),pct=(s/5)*100;
+    const card=document.createElement('div');
+    card.className=`pc ${st.cls}`;
+    card.innerHTML=`<div class="pc-name">${p.title}</div><div class="pc-score"><span class="pc-num">${s}</span><span class="pc-den">/5</span></div><span class="badge ${st.bcls}">${st.lbl}</span><div class="pbar"><div class="pbar-fill" style="width:0%" data-pct="${pct}"></div></div>`;
+    grid.appendChild(card);
+  });
+  setTimeout(()=>{document.querySelectorAll('.pbar-fill').forEach(el=>{el.style.width=el.dataset.pct+'%';});},300);
+
+  // Recommendations sorted by lowest score
+  const sorted=[...PILLARS].sort((a,b)=>ps[a.id]-ps[b.id]);
+  const rc=document.getElementById('recsContainer');
+  rc.innerHTML='';
+  sorted.forEach((p,i)=>{
+    const s=ps[p.id],rec=getRec(p.id,s),pri=i<2&&s<3;
+    const card=document.createElement('div');
+    card.className='rec-card'+(pri?' pri':'');
+    card.innerHTML=`<div class="rec-tag${pri?' pri':''}">${pri?'⚠ Priority — ':''}${p.title} · ${s}/5</div><div class="rec-ttl">${rec.t}</div><div class="rec-body">${rec.b}</div>`;
+    rc.appendChild(card);
+  });
+
+  show('s-results');
+  scrollTo(0,0);
+}
+
+// ── EMAIL SUBMISSION ──────────────────────────────────────────
+async function submitResults(){
+  const name=document.getElementById('iName').value.trim();
+  const email=document.getElementById('iEmail').value.trim();
+  const err=document.getElementById('emailErr');
+  if(!name||!email||!email.includes('@')||!email.includes('.')){
+    err.style.display='block'; return;
+  }
+  err.style.display='none';
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('submitBtn').innerHTML='Sending…';
+  document.getElementById('loader').classList.add('on');
+
+  const{ps,overall}=calcScores();
+  const v=verdict(overall);
+  const top=[...PILLARS].sort((a,b)=>ps[a.id]-ps[b.id])[0];
+  const topRec=getRec(top.id,ps[top.id]);
+
+  const summary=PILLARS.map(p=>`${p.title}: ${ps[p.id]}/5 (${status(ps[p.id]).lbl})`).join('\n');
+
+  if(EJS_KEY!=='YOUR_PUBLIC_KEY'){
+    try{
+      emailjs.init(EJS_KEY);
+      await emailjs.send(EJS_SERVICE,EJS_TEMPLATE,{
+        to_name:name, to_email:email, owner_email:OWNER_EMAIL,
+        overall_score:`${overall}/5`, overall_verdict:v.v,
+        score_summary:summary,
+        top_priority:top.title,
+        top_rec_title:topRec.t, top_rec_body:topRec.b,
+        booking_link:'https://bit.ly/HLA-Consultation',
+        offer_score:`${ps.offer}/5`,
+        leadgen_score:`${ps.leadgen}/5`,
+        closing_score:`${ps.closing}/5`,
+        sales_score:`${ps.sales}/5`,
+        backend_score:`${ps.backend}/5`
+      });
+    }catch(e){console.error('EmailJS:',e);}
+  }
+
+  document.getElementById('loader').classList.remove('on');
+  showResults(name);
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
