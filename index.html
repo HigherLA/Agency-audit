@@ -319,7 +319,7 @@ const PILLARS = [
         {l:'Klaviyo',s:.75},{l:'Other',s:.75},{l:"I don't use a CRM",s:0}]},
       { id:'q2', text:'Who does your lead gen?', type:'radio', opts:[
         {l:'I do it myself',s:.5},{l:'I have someone / a team',s:1},
-        {l:"It's automated",s:1},{l:'Still working on it',s:.25}]},
+        {l:"It's automated",s:1},{l:'Still working on it',s:0}]},
       { id:'q3', text:'Do you have closers?', type:'radio', opts:[
         {l:'I have full-time closers',s:1},{l:'I have 1099 closers',s:.75},{l:'I handle closing myself',s:.5}]},
       { id:'q4', text:'How much of your sales process is automated?', type:'radio', opts:[
@@ -336,23 +336,22 @@ const PILLARS = [
   {
     id:'closing', title:'Closing', num:'Pillar 04',
     questions:[
-      { id:'q1', text:'What CRM do you use?', type:'radio', opts:[
-        {l:'GHL (GoHighLevel)',s:1},{l:'HubSpot',s:1},{l:'Salesforce',s:1},
-        {l:'Klaviyo',s:.75},{l:'Other',s:.75},{l:"I don't use a CRM",s:0}]},
-      { id:'q2', text:'Who does your lead gen?', type:'radio', opts:[
-        {l:'I do it myself',s:.5},{l:'I have someone / a team',s:1},
-        {l:"It's automated",s:1},{l:'Still working on it',s:.25}]},
-      { id:'q3', text:'Do you have closers?', type:'radio', opts:[
-        {l:'I have full-time closers',s:1},{l:'I have 1099 closers',s:.75},{l:'I handle closing myself',s:.5}]},
-      { id:'q4', text:'How much of your sales process is automated?', type:'radio', opts:[
-        {l:'No automation yet',s:.25},{l:'Basic automation',s:.5},
-        {l:'Good automation — still a lot of manual work',s:.75},
-        {l:'Advanced — most of our work is automated',s:1}]},
-      { id:'q5', text:'Do you have a referral system set up?', type:'radio', opts:[
-        {l:'I sometimes get referrals from friends and family',s:.25},
-        {l:'I get referrals from people I worked with',s:.5},
-        {l:"I don't get any referrals",s:0},
-        {l:'I have a commission-based referral system',s:1}]}
+      { id:'q1', text:'What is your talking-to-listening ratio in sales calls?', type:'radio', opts:[
+        {l:'10–30% listening, 70–90% talking',s:.33},
+        {l:'40–60% listening, 40–60% talking',s:.67},
+        {l:'70–90% listening, 10–30% talking',s:1}]},
+      { id:'q2', text:'How much time do you spend talking about the features?', type:'radio', opts:[
+        {l:'5–25%',s:1},{l:'25–50%',s:.75},{l:'50–70%',s:.5},{l:'70–95%',s:.25}]},
+      { id:'q3', text:'Do you use a particular strategy or rely on experience?', type:'radio', opts:[
+        {l:'I use a specific strategy that covers every phase of the sales call',s:1},
+        {l:'I go with the flow based on what the client needs',s:.5},
+        {l:'I do a free consultation and go through general information',s:.33},
+        {l:'I follow general sales tips throughout the call',s:.5}]},
+      { id:'q4', text:'How long have you been doing sales?', type:'radio', opts:[
+        {l:'Just started / want to start',s:.25},{l:'1–5 years of experience',s:.5},
+        {l:'5–10 years of experience',s:.75},{l:'Over 10 years of experience',s:1}]},
+      { id:'q5', text:'What is your close rate?', type:'radio', opts:[
+        {l:'0–10%',s:.2},{l:'10–30%',s:.4},{l:'30–50%',s:.6},{l:'50–70%',s:.8},{l:'70–100%',s:1}]}
     ]
   },
   {
@@ -381,8 +380,8 @@ const PILLARS = [
       { id:'q5', text:'Is everything documented?', type:'radio', opts:[
         {l:'Everything is recorded and documented',s:1},
         {l:'We document the most important things and stay aligned with the vision',s:.75},
-        {l:"We note things when they're relevant or when we have to",s:.5},
-        {l:"We don't record or document anything",s:.25}]}
+        {l:"We note things when they're relevant or when we have to",s:.25},
+        {l:"We don't record or document anything",s:0}]}
     ]
   }
 ];
